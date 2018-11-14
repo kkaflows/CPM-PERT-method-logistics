@@ -1,6 +1,7 @@
-function [graph, resultGraph, criticalPathNodes] = CPM(s,t,to)
+function [graph, resultGraph, criticalPathNodes] = CPM2(s,t,tc, tm, tp)
 
-%potrzebuje tylko to
+%potrzebuje do obliczen tc, tm, tp,
+%to wylicza program ze wzoru
 
 %input:
 %s - wezly poczatkowy czynnosci
@@ -15,8 +16,11 @@ function [graph, resultGraph, criticalPathNodes] = CPM(s,t,to)
 %2 - najpozniejszy czas wykonania
 %3 - luz (roznica miedzy dwoma powyzej
 
-%clc
+clc
 
+%oblicza czas oczekiwany z czasu optymistycznego, najbardziej
+%prawdopodobnego i pesymistycznego
+to = calculateExpectedTime(tc,tm,tp)
 
 graph = digraph(s,t, to)
 
@@ -34,4 +38,5 @@ highlight(h,criticalPathNodes,'EdgeColor','r','LineWidth',2);
 %highlight(h,criticalPathNodes,'EdgeColor','r','LineWidth',2);
 
 end
+
 
