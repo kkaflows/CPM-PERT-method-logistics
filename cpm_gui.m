@@ -22,7 +22,7 @@ function varargout = cpm_gui(varargin)
 
 % Edit the above text to modify the response to help cpm_gui
 
-% Last Modified by GUIDE v2.5 14-Nov-2018 00:26:18
+% Last Modified by GUIDE v2.5 19-Nov-2018 21:44:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -200,14 +200,16 @@ function cpm_Callback(hObject, eventdata, handles)
 s = str2num(char(get(handles.s, 'String')))
 t = str2num(char(get(handles.t, 'string')))
 to = str2num(char(get(handles.to, 'string')))
+tc = str2num(char(get(handles.tc, 'string')))
+tm = str2num(char(get(handles.tm, 'string')))
+tp = str2num(char(get(handles.tp, 'string')))
 
 graph = digraph(s,t)
 
 acyclic = isdag(graph)
 
 if(acyclic == 1)
-[graph graphResult criticalNodes] = CPM(s,t,to)
-
+[graph graphResult criticalNodes overallTime] = CPM(s,t,tc, tm, tp,to)
 else 
     disp('graph has cycles')
 end
@@ -228,7 +230,7 @@ function pert_Callback(hObject, eventdata, handles)
 
 s = str2num(char(get(handles.s, 'String')))
 t = str2num(char(get(handles.t, 'string')))
-%tm = str2num(char(get(handles.tm, 'string')))
+tm = str2num(char(get(handles.tm, 'string')))
 tc = str2num(char(get(handles.tc, 'string')))
 tp = str2num(char(get(handles.tp, 'string')))
 to = str2num(char(get(handles.to, 'string')))
@@ -238,14 +240,21 @@ graph = digraph(s,t)
 acyclic = isdag(graph) %sprawdza czy graph jest acykliczny
 
 if(acyclic == 1)
-[graph graphResult criticalNodes] = CPM(s,t,to)
+[graph graphResult criticalNodes overallTime] = CPM(s,t,tc,tm,tp,to)
 max(graphResult(:,2))
+%wartosc wariancji juz po zsumowaniu i pierwiastkowaniu
 variation = PERT(s,t,tc, tp, criticalNodes)
+%czas ktory podajesz w gui do sprawdzenia
 timeExpected = str2num(char(get(handles.timeExpected, 'String')))
-standardTime = calculateStandardTime(timeExpected, max(graphResult(:,2)), variation)
+if(size(timeExpected) == 0)
+   f = msgbox('Wpisz jaki chcesz sprawdzic czas') 
+end
+
+%wartosc do odczytania z rozkladu normalnego
+standardTime = calculateStandardTime(timeExpected, overallTime, variation)
 
 else
-    disp('graph has cycles')
+    f = msgbox('Graf jest cykliczny, nie mozna wyznaczyc sciezki krytycznej');
 end
 
 
@@ -290,41 +299,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in cpm2.
-function cpm2_Callback(hObject, eventdata, handles)
-% hObject    handle to cpm2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-s = str2num(char(get(handles.s, 'String')))
-t = str2num(char(get(handles.t, 'string')))
-tm = str2num(char(get(handles.tm, 'string')))
-tc = str2num(char(get(handles.tc, 'string')))
-tp = str2num(char(get(handles.tp, 'string')))
-
-
-graph = digraph(s,t)
-
-acyclic = isdag(graph)
-
-if(acyclic == 1)
-
-[graph graphResult criticalNodes] = CPM2(s,t,tc, tm, tp)
-
-else
-    disp('graph has cycles')
-end
-
-
-
-
-% --- Executes during object creation, after setting all properties.
-function cpm2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to cpm2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-
 
 function timeExpected_Callback(hObject, eventdata, handles)
 % hObject    handle to timeExpected (see GCBO)
@@ -346,35 +320,3 @@ function timeExpected_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on button press in pert2.
-function pert2_Callback(hObject, eventdata, handles)
-% hObject    handle to pert2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-%sa dwa przyciski PERT, aby moc uzyc CPM, lub CPM2
-%w zaleznosci od danych, 
-s = str2num(char(get(handles.s, 'String')))
-t = str2num(char(get(handles.t, 'string')))
-tm = str2num(char(get(handles.tm, 'string')))
-tc = str2num(char(get(handles.tc, 'string')))
-tp = str2num(char(get(handles.tp, 'string')))
-
-graph = digraph(s,t)
-
-acyclic = isdag(graph)
-
-if(acyclic == 1)
-
-[graph graphResult criticalNodes] = CPM2(s,t,tc, tm, tp)
-max(graphResult(:,2));
-variation = PERT(s,t,tc, tp, criticalNodes)
-timeExpected = str2num(char(get(handles.timeExpected, 'String')))
-standardTime = calculateStandardTime(timeExpected, max(graphResult(:,2)), variation)
-else
-   disp('graph has cycles') 
-end
-
-

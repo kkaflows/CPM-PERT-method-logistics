@@ -12,16 +12,10 @@ to = [14 10 11 2 10 21 14 18 8 12 20]
 timeExpected = 48 %jakie bedzie prawdopodobienstwo ze sie uda zrobic to w tym czasie
 
 
-%w zaleznosci od danych, czy mamy tm czy to
-%mam to gotowe
-[graph graphResult criticalNodes] = CPM(s, t,to)
+
+[graph graphResult criticalNodes overallTime] = CPM(s, t,tc, tm, tp,to)
 variation = PERT(s,t,tc,tp, criticalNodes)
-standardTime = calculateStandardTime(timeExpected, max(graphResult(:,2)), variation)
-%lub
-%mam tm
-%program sam wyliczy to
-[graph graphResult criticalNodes] = CPM2(s, t,tc, tm, tp)
-variation = PERT(s,t,tc,tp, criticalNodes)
-standardTime = calculateStandardTime(timeExpected, max(graphResult(:,2)), variation)
+standardTime = calculateStandardTime(timeExpected, overallTime, variation)
+
 
 

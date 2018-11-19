@@ -1,8 +1,8 @@
-function [result] = calculateEarliestTime(s,t, weights)
+function [result] = calculateEarliestTime(s,t, to)
 
 %s - poczatek zadania
 %t-koniec zadania
-%weights - waga na polaczeniu
+%to - waga na polaczeniu
 
 %[m n] = size(t)
 nodes = max(t);
@@ -12,7 +12,7 @@ sum = 0;
 for i = 2:1:nodes
    %indexes = t == i
    indexes =find( t == i);
-   weightsTmp = weights(indexes);
+   weightsTmp = to(indexes);
    previousTime = result(s(indexes), 1);
    
    sum = weightsTmp + previousTime.';

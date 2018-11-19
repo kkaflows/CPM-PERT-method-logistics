@@ -1,4 +1,4 @@
-function [resultGraph] = calculateLastTime(s,t, weights, resultGraph)
+function [resultGraph] = calculateLastTime(s,t, to, resultGraph)
 %CALCULATELASTTIME Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,7 +8,7 @@ resultGraph(nodes,2) = resultGraph(nodes,1);
 
 for i=nodes-1:-1:2
    indexes =find( s == i);
-   weightsTmp = weights(indexes);
+   weightsTmp = to(indexes);
    previousTime = resultGraph(t(indexes), 2);
    
    sum = previousTime.' - weightsTmp;
