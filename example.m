@@ -16,6 +16,7 @@ timeExpected = 48 %jakie bedzie prawdopodobienstwo ze sie uda zrobic to w tym cz
 [graph graphResult criticalNodes overallTime] = CPM(s, t,tc, tm, tp,to)
 variation = PERT(s,t,tc,tp, criticalNodes)
 standardTime = calculateStandardTime(timeExpected, overallTime, variation)
+probabilityOfSuccess = calculateNormalDistribuition(standardTime)
 
 
 

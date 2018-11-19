@@ -22,7 +22,7 @@ function varargout = cpm_gui(varargin)
 
 % Edit the above text to modify the response to help cpm_gui
 
-% Last Modified by GUIDE v2.5 19-Nov-2018 21:44:05
+% Last Modified by GUIDE v2.5 19-Nov-2018 22:57:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -197,7 +197,7 @@ function cpm_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-s = str2num(char(get(handles.s, 'String')))
+s = str2num(char(get(handles.s, 'string')))
 t = str2num(char(get(handles.t, 'string')))
 to = str2num(char(get(handles.to, 'string')))
 tc = str2num(char(get(handles.tc, 'string')))
@@ -210,6 +210,9 @@ acyclic = isdag(graph)
 
 if(acyclic == 1)
 [graph graphResult criticalNodes overallTime] = CPM(s,t,tc, tm, tp,to)
+
+set(handles.overallTimeResult, 'string', num2str(overallTime))
+set(handles.criticalPathNodesResult, 'string', num2str(criticalNodes))
 else 
     disp('graph has cycles')
 end
@@ -252,6 +255,13 @@ end
 
 %wartosc do odczytania z rozkladu normalnego
 standardTime = calculateStandardTime(timeExpected, overallTime, variation)
+%obliczanie prawdopodobienstwa sukcesu wykonania w podanym czasie
+probabilityOfSuccess = calculateNormalDistribuition(standardTime)
+
+set(handles.overallTimeResult, 'string', num2str(overallTime))
+set(handles.criticalPathNodesResult, 'string', num2str(criticalNodes))
+set(handles.probabilityResult, 'string', num2str(probabilityOfSuccess))
+
 
 else
     f = msgbox('Graf jest cykliczny, nie mozna wyznaczyc sciezki krytycznej');
@@ -320,3 +330,33 @@ function timeExpected_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+
+% --- Executes during object creation, after setting all properties.
+function text9_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function probabilityResult_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to probabilityResult (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function criticalPathNodesResult_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to criticalPathNodesResult (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function overallTimeResult_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to overallTimeResult (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
